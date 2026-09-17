@@ -37,7 +37,7 @@ try {
     $recipe_gallery = $stmt4->fetchAll();
 
     // рецепты
-    $stmt5 = $pdo->query('SELECT id, title, category, description, url, image, ingredients, content, is_active, is_show_home FROM mod_recipe ORDER BY id');
+    $stmt5 = $pdo->query('SELECT id, title, category, description, url, image, ingredients, content, is_active, is_show_home, orders FROM mod_recipe ORDER BY id');
     $recipe = $stmt5->fetchAll();
 
     $response = array(

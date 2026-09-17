@@ -148,6 +148,13 @@ export default {
           const arr = (data && data.recipe) ? data.recipe : [];
           this.recipes = arr.map(r => ('show' in r ? r : Object.assign({}, r, { show: false })));
 
+          // Сортировка по полю orders (числовая, по возрастанию)
+          this.recipes.sort((a, b) => {
+            const ao = Number(a && a.orders != null ? a.orders : 0);
+            const bo = Number(b && b.orders != null ? b.orders : 0);
+            return ao - bo;
+          });
+
           if (this.initialCategory) {
             this.selectedCategory = String(this.initialCategory);
           }
