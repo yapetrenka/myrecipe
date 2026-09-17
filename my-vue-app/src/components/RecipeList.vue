@@ -6,6 +6,12 @@
             :categories="categories"
             v-model="selectedCategory"
         />
+        <div class="filter-panel__has-content">
+          <label class="switch">
+            <input type="checkbox" v-model="hasContentOnly" />
+            <span class="switch__lbl">есть описание</span>
+          </label>
+        </div>
       </div>
       <div class="filter-panel__search">
         <SearchBar @search="searchRecipes" />
@@ -52,6 +58,7 @@ export default {
       categories: [],
       searchQuery: '',
       selectedCategory: '', // выбранная категория ('' — все)
+      hasContentOnly: false,
       loading: true,
       error: null,
       perPage: 8,
@@ -65,6 +72,12 @@ export default {
       return this.recipes.filter(r => {
         if (r && r.is_active && String(r.is_active).toLowerCase() === 'no') return false;
         if (this.showOnHome && r && r.is_show_home && String(r.is_show_home).toLowerCase() === 'no') return false;
+
+        // фильтр по наличию описания
+        if (this.hasContentOnly) {
+          const content = (r.content || '').toString().trim();
+          if (!content) return false;
+        }
 
         const title = (r.title || '').toLowerCase();
         const desc = (r.description || '').toLowerCase();
@@ -126,6 +139,9 @@ export default {
     },
     searchQuery() {
       this.resetDisplayed();
+    },
+    hasContentOnly() {
+      this.resetDisplayed();
     }
   },
   mounted() {
@@ -186,5 +202,15 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+
+  &__category {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__has-content {
+
+  }
 }
 </style>

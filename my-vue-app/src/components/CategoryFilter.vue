@@ -33,7 +33,6 @@ export default {
 <style lang="scss" scoped>
 @use '@styles/variables' as *;
 .category-filter {
-  margin-bottom: 20px;
   display: flex;
   align-items: center;
   &__lbl {

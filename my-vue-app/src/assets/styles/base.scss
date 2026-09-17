@@ -97,3 +97,50 @@ input, textarea {
     border-bottom-right-radius: 0;
   }
 }
+
+.switch {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  position: relative;
+  font-size: 14px;
+  input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+  }
+  &__lbl {
+    padding-left: 30px;
+    &:before {
+      border: 1px solid;
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 20px;
+      width: 20px;
+    }
+    &:after {
+      background-color: $base-color;
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 5px;
+      height: 10px;
+      width: 10px;
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    input[type="radio"] + & {
+      &:before, &:after {
+        border-radius: 50%;
+      }
+    }
+    input:checked + & {
+      &:after {
+        opacity: 1;
+      }
+    }
+  }
+}

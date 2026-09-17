@@ -13,8 +13,8 @@ header('Content-Type: text/html; charset=utf-8');
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>my-vue-app</title>
-    <script type="module" crossorigin src="/assets/index-pLhMmMcx.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CQOc4sIR.css">
+    <script type="module" crossorigin src="/assets/index-BqRxIDeu.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C3b_1WT6.css">
 </head>
 <body style="opacity: 0;">
 <div id="app"></div>
