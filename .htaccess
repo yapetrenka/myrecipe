@@ -1,0 +1,43 @@
+# File: `/.htaccess`
+Options +FollowSymLinks
+RewriteEngine On
+
+<IfModule mod_rewrite.c>
+ RewriteEngine On
+ RewriteCond %{QUERY_STRING} ^(%2d|-)[^=]+$ [NC]
+ RewriteRule ^(.*) $1? [L]
+
+ RewriteCond %{HTTPS} !=on
+ RewriteCond %{HTTP_HOST} !^www\..+$ [NC]
+ RewriteRule ^ http://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+ Options -Indexes
+
+ # В каталогах сначала ищем index.php (это важно для реальных директорий), затем spa.php
+ DirectoryIndex index.php spa.php
+
+ RewriteBase /
+
+ # Корень сайта — отдаём spa.php
+ RewriteRule ^$ /spa.php [L,NC]
+
+ # SPA-маршруты — отдаём `spa.php`
+ RewriteRule ^(features|recipes|about)(/.*)?$ /spa.php [L,NC]
+
+ # Если запрошенный файл или папка существуют — отдать их
+ RewriteCond %{REQUEST_FILENAME} -f [OR]
+ RewriteCond %{REQUEST_FILENAME} -d
+ RewriteRule ^ - [L]
+
+ # Все остальные запросы — на index.php (ваша CMS)
+ RewriteRule . /index.php [L]
+</IfModule>
+
+<Files "config.php">
+ Order allow,deny
+ Deny from all
+</Files>
+
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 401 /index.php
