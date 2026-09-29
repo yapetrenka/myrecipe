@@ -1,14 +1,16 @@
 <template>
   <div class="category-filter">
     <div class="category-filter__lbl">Выберите категорию:</div>
-    <select id="category" class="select-base" :value="modelValue" @change="onChange">
-      <option value="">Все</option>
-      <option
-          v-for="c in categories"
-          :key="c.id"
-          :value="String(c.id)"
-      >{{ c.name }}</option>
-    </select>
+    <div class="category-filter__select">
+      <select id="category" class="select-base" :value="modelValue" @change="onChange">
+        <option value="">Все</option>
+        <option
+            v-for="c in categories"
+            :key="c.id"
+            :value="String(c.id)"
+        >{{ c.name }}</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -38,6 +40,11 @@ export default {
   &__lbl {
     margin-right: 10px;
     flex: none;
+  }
+  @media (max-width: 768px) {
+    &__select {
+      flex: 1;
+    }
   }
 }
 </style>

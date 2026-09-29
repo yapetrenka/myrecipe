@@ -23,7 +23,6 @@ export default {
 <style lang="scss" scoped>
 @use '@styles/variables' as *;
 .search-bar {
-  margin-bottom: 20px;
-  width: 240px;
+
 }
 </style>

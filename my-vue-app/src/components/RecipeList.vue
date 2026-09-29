@@ -194,23 +194,48 @@ export default {
     gap: 20px;
     margin: 0;
     padding: 0;
-    list-style: none;
+    @media (max-width: 991px) {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 400px) {
+      grid-template-columns: repeat(1, 1fr);
+    }
   }
 }
 
 .filter-panel {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-bottom: 40px;
 
   &__category {
     display: flex;
     align-items: center;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 10px 20px;
   }
 
   &__has-content {
 
+  }
+  &__search {
+    width: 240px;
+  }
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;
+    &__category {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    &__search {
+      width: 100%;
+    }
   }
 }
 </style>

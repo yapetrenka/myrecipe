@@ -37,6 +37,7 @@ export default {
 @use '@styles/variables' as *;
 .recipe-item {
   background: $light-color;
+  box-shadow: 0 2px 15px rgba(0,0,0,0.05);
   padding: 20px;
   border-radius: $border-radius-base;
   transition: transform 0.2s;
@@ -53,10 +54,9 @@ export default {
     margin-bottom: 12px;
   }
   &__name {
-    font-size: 22px;
+    font-size: 20px;
     margin: 0 0 10px;
   }
-
   &__category {
     font-size: 0.9em;
     color: #666;
@@ -68,6 +68,14 @@ export default {
     margin: 0 0 10px;
     color: $base-color-light;
     font-size: .8em;
+  }
+  @media (max-width: 991px) {
+    padding: 15px;
+  }
+  @media (max-width: 768px) {
+    &__name {
+      font-size: 18px;
+    }
   }
 }
 </style>

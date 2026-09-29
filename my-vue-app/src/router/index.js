@@ -23,7 +23,13 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory('/'), // явно указать базу
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        // если есть сохранённая позиция (back/forward) — вернуть её,
+        // иначе прокрутить наверх
+        if (savedPosition) return savedPosition;
+        return { left: 0, top: 0 };
+    }
 })
 
 export default router

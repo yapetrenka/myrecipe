@@ -223,6 +223,18 @@ export default {
   &__carousel {
     flex: none;
     width: 50%;
+    .carousel__next, .carousel__prev, .carousel__icon {
+      color: #fff;
+      height: 40px;
+      width: 40px;
+    }
+    .carousel__pagination-button {
+      background-color: #fff;
+      opacity: .6;
+    }
+    .carousel__pagination-button--active {
+      opacity: 1;
+    }
   }
 
   &__image {
@@ -246,13 +258,7 @@ export default {
         border-bottom: 1px dashed #d1d1d1;
         &:last-child {
           text-align: right;
-        }
-      }
-      tr {
-        &:last-child {
-          td {
-            border-bottom: none;
-          }
+          white-space: nowrap;
         }
       }
     }
@@ -260,6 +266,28 @@ export default {
 
   &__instructions {
     margin-top: 50px;
+  }
+
+  @media (max-width: 991px) {
+    &__ingredients {
+      margin-left: 30px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__layout {
+      display: block;
+    }
+    &__carousel {
+      margin: 0 auto;
+      width: auto;
+      max-width: 400px;
+    }
+    &__ingredients {
+      margin-left: 0;
+      margin-top: 30px;
+      font-size: .9em;
+    }
   }
 }
 </style>

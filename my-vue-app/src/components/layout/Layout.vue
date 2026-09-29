@@ -34,4 +34,10 @@ export default {
 .main-center {
   flex: 1;
 }
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 90px 15px 0;
+  }
+}
 </style>

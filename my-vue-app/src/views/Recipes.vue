@@ -73,5 +73,5 @@ export default {
 </script>
 
 <style scoped>
-.recipes-page { padding: 20px; }
+
 </style>

@@ -11,10 +11,10 @@ header('Content-Type: text/html; charset=utf-8');
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-vue-app</title>
-    <script type="module" crossorigin src="/assets/index-BqRxIDeu.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C3b_1WT6.css">
+    <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, initial-scale=1.0, minimum-scale=1.0">
+    <title>myrecipe</title>
+    <script type="module" crossorigin src="/assets/index-8pQVb61I.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BlXatmB4.css">
 </head>
 <body style="opacity: 0;">
 <div id="app"></div>
