@@ -2,12 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Main from '@/views/Main.vue'
 import Recipes from '@/views/Recipes.vue'
 import RecipePage from '@/views/RecipePage.vue'
-import Features from '@/views/Features.vue'
 import About from '@/views/About.vue'
 
 const routes = [
     { path: '/', name: 'Main', component: Main },
-    { path: '/features', name: 'Features', component: Features },
 
     // список всех рецептов
     { path: '/recipes', name: 'Recipes', component: Recipes, props: route => ({ category: '' }) },

@@ -7,27 +7,29 @@
       <h1>{{ recipe.title }}</h1>
       <p class="recipe-detail__description">{{ recipe.description }}</p>
 
-      <!-- если есть хоть одно изображение — показываем карусель -->
       <div class="recipe-detail__layout">
         <Carousel v-if="carouselItems.length" class="recipe-detail__carousel" v-bind="config">
           <Slide v-for="(src, idx) in carouselItems" :key="idx">
-            <img :src="src" :alt="recipe.title + ' — ' + (idx + 1)" class="recipe-detail__image" @click="showLightbox(index)" />
+            <img :src="src" :alt="recipe.title + ' — ' + (idx + 1)" class="recipe-detail__image" @click="showLightbox(idx)" />
           </Slide>
           <template #addons>
             <Navigation />
             <Pagination />
           </template>
         </Carousel>
+
         <vue-easy-lightbox
             :visible="lightboxVisible"
             :imgs="lightboxImages"
             :index="lightboxIndex"
             @hide="lightboxVisible = false"
         />
+
         <div class="recipe-detail__ingredients" v-if="recipe.ingredients">
           <div v-html="recipe.ingredients"></div>
         </div>
       </div>
+
       <div class="recipe-detail__instructions" v-if="recipe.content">
         <div v-html="cleanedContent"></div>
       </div>
@@ -41,6 +43,7 @@ import { useRoute } from 'vue-router'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import 'vue3-carousel/dist/carousel.css'
 import VueEasyLightbox from 'vue-easy-lightbox'
+import { fetchApi } from '@/services/api.js'
 
 export default {
   name: 'RecipePage',
@@ -56,23 +59,16 @@ export default {
     const urlParam = route.params.url
 
     const recipe = ref(null)
-
-    // основной рисунок: два варианта размеров
     const imageUrlBig = ref(null)
     const imageUrlSource = ref(null)
-
-    // галерея: два варианта размеров
     const galleryImagesBig = ref([])
     const galleryImagesSource = ref([])
-
     const loading = ref(true)
     const error = ref(null)
 
-    // лайтбокс
     const lightboxVisible = ref(false)
     const lightboxIndex = ref(0)
 
-    // вытаскивает путь файла для нужного размера (например 'big' или 'source')
     function parseImageSize(serialized, size) {
       if (!serialized || typeof serialized !== 'string') return null
       const re = new RegExp('s:\\d+:"' + size + '"[\\s\\S]*?s:4:"file";s:\\d+:"([^"]+)"')
@@ -87,7 +83,6 @@ export default {
       lightboxVisible.value = true
     }
 
-    // карусель использует big
     const carouselItems = computed(() => {
       const out = []
       if (imageUrlBig.value) out.push(imageUrlBig.value)
@@ -97,7 +92,6 @@ export default {
       return out
     })
 
-    // лайтбокс использует source
     const lightboxImages = computed(() => {
       const out = []
       if (imageUrlSource.value) out.push(imageUrlSource.value)
@@ -107,13 +101,10 @@ export default {
       return out
     })
 
-    // чистим content от экранированных слешей и декодируем сущности
     const cleanedContent = computed(() => {
       const raw = recipe.value && recipe.value.content ? recipe.value.content : ''
       if (!raw) return ''
-      // убрать экранирующие обратные слеши перед кавычками и слешами
       let s = raw.replace(/\\\"/g, '"').replace(/\\\//g, '/')
-      // декодировать HTML-сущности и нормализовать HTML через DOMParser
       try {
         const doc = new DOMParser().parseFromString(s, 'text/html')
         return doc.body.innerHTML || s
@@ -124,60 +115,42 @@ export default {
 
     onMounted(async () => {
       try {
-        const isLocalHostNames = ['localhost', '127.0.0.1', '::1']
-        const isLocal = isLocalHostNames.includes(window.location.hostname) || process.env.NODE_ENV === 'development'
-        const apiUrl = isLocal ? '/api/local.json' : '/api.php'
-
-        const res = await fetch(apiUrl)
-        const text = await res.text()
-        const ct = (res.headers.get('Content-Type') || '').toLowerCase()
-        if (!res.ok) throw new Error('HTTP ' + res.status)
-        if (!ct.includes('application/json')) throw new Error('Unexpected response (not JSON)')
-        const data = JSON.parse(text)
-
+        const data = await fetchApi() // возвращает весь JSON (recipe, recipe_gallery, ...)
         const arr = (data && data.recipe) ? data.recipe : []
         const found = arr.find(r => String(r.url) === String(urlParam)) || null
 
-        if (!found) {
+        if (!found || (found.is_active && String(found.is_active).toLowerCase() === 'no')) {
           recipe.value = null
           galleryImagesBig.value = []
           galleryImagesSource.value = []
           imageUrlBig.value = null
           imageUrlSource.value = null
         } else {
-          if (found.is_active && String(found.is_active).toLowerCase() === 'no') {
-            recipe.value = null
-            galleryImagesBig.value = []
-            galleryImagesSource.value = []
-            imageUrlBig.value = null
-            imageUrlSource.value = null
-          } else {
-            recipe.value = found
+          recipe.value = found
 
-            if (found.image) {
-              const bigPath = parseImageSize(found.image, 'big')
-              const srcPath = parseImageSize(found.image, 'source')
-              if (bigPath) imageUrlBig.value = bigPath
-              if (srcPath) imageUrlSource.value = srcPath
-            }
-
-            const galleryArr = Array.isArray(data.recipe_gallery) ? data.recipe_gallery : []
-            const bigs = []
-            const srcs = []
-            galleryArr
-                .filter(g => g && (g.recipe_id != null) && String(g.recipe_id) === String(found.id))
-                .forEach(g => {
-                  const b = parseImageSize(g.image, 'big')
-                  const s = parseImageSize(g.image, 'source')
-                  if (b) bigs.push(b)
-                  if (s) srcs.push(s)
-                })
-            galleryImagesBig.value = bigs
-            galleryImagesSource.value = srcs
+          if (found.image) {
+            const bigPath = parseImageSize(found.image, 'big')
+            const srcPath = parseImageSize(found.image, 'source')
+            if (bigPath) imageUrlBig.value = bigPath
+            if (srcPath) imageUrlSource.value = srcPath
           }
+
+          const galleryArr = Array.isArray(data.recipe_gallery) ? data.recipe_gallery : []
+          const bigs = []
+          const srcs = []
+          galleryArr
+              .filter(g => g && (g.recipe_id != null) && String(g.recipe_id) === String(found.id))
+              .forEach(g => {
+                const b = parseImageSize(g.image, 'big')
+                const s = parseImageSize(g.image, 'source')
+                if (b) bigs.push(b)
+                if (s) srcs.push(s)
+              })
+          galleryImagesBig.value = bigs
+          galleryImagesSource.value = srcs
         }
       } catch (e) {
-        error.value = e.message
+        error.value = e && e.message ? e.message : String(e)
       } finally {
         loading.value = false
       }
@@ -192,7 +165,6 @@ export default {
       loading,
       error,
       carouselItems,
-      // лайтбокс
       lightboxVisible,
       lightboxImages,
       lightboxIndex,
@@ -202,7 +174,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="scss">
 @use '@styles/variables' as *;

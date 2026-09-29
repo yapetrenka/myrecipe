@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { getCategories } from '@/services/api.js';
+
 export default {
   name: 'Header',
   data() {
@@ -45,27 +47,16 @@ export default {
       isMobile: false
     };
   },
-  mounted() {
+  async mounted() {
     this.checkViewport();
     window.addEventListener('resize', this.checkViewport);
     this.$watchRouteClose();
 
-    const isLocalHostNames = ['localhost', '127.0.0.1', '::1'];
-    const isLocal = isLocalHostNames.includes(window.location.hostname) || process.env.NODE_ENV === 'development';
-    const url = isLocal ? '/api/local.json' : '/api.php';
-
-    fetch(url)
-        .then(async res => {
-          const text = await res.text();
-          const ct = (res.headers.get('Content-Type') || '').toLowerCase();
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          if (!ct.includes('application/json')) throw new Error('Unexpected response (not JSON): ' + text.slice(0, 200));
-          try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON: ' + e.message); }
-        })
-        .then(data => {
-          this.categories = Array.isArray(data.recipe_category) ? data.recipe_category : [];
-        })
-        .catch(() => { this.categories = []; });
+    try {
+      this.categories = await getCategories();
+    } catch (e) {
+      this.categories = [];
+    }
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.checkViewport);

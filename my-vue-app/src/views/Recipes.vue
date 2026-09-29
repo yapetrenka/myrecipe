@@ -7,6 +7,7 @@
 
 <script>
 import RecipeList from '@/components/RecipeList.vue';
+import { getCategories } from '@/services/api.js';
 
 export default {
   name: 'Recipes',
@@ -40,33 +41,21 @@ export default {
     }
   },
   methods: {
-    loadCategoryName() {
+    async loadCategoryName() {
       this.categoryName = '';
       this.loadingName = true;
       const id = this.categoryProp;
       if (!id) { this.loadingName = false; return; }
 
-      const isLocalHostNames = ['localhost', '127.0.0.1', '::1'];
-      const isLocal = isLocalHostNames.includes(window.location.hostname) || process.env.NODE_ENV === 'development';
-      const url = isLocal ? '/api/local.json' : '/api.php';
-
-      fetch(url)
-          .then(async res => {
-            const text = await res.text();
-            const ct = (res.headers.get('Content-Type') || '').toLowerCase();
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            if (!ct.includes('application/json')) throw new Error('Unexpected response (not JSON): ' + text.slice(0, 200));
-            try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON: ' + e.message); }
-          })
-          .then(data => {
-            const cats = Array.isArray(data.recipe_category) ? data.recipe_category : [];
-            const found = cats.find(c => String(c.id) === id);
-            this.categoryName = found ? found.name : '';
-          })
-          .catch(() => {
-            this.categoryName = '';
-          })
-          .finally(() => { this.loadingName = false; });
+      try {
+        const cats = await getCategories();
+        const found = Array.isArray(cats) ? cats.find(c => String(c.id) === id) : null;
+        this.categoryName = found ? found.name : '';
+      } catch (e) {
+        this.categoryName = '';
+      } finally {
+        this.loadingName = false;
+      }
     }
   }
 };

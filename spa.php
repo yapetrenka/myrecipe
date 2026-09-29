@@ -13,8 +13,8 @@ header('Content-Type: text/html; charset=utf-8');
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1.0, initial-scale=1.0, minimum-scale=1.0">
     <title>myrecipe</title>
-    <script type="module" crossorigin src="/assets/index-8pQVb61I.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BlXatmB4.css">
+    <script type="module" crossorigin src="/assets/index-DPgBmxJ9.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DP5EA-_8.css">
 </head>
 <body style="opacity: 0;">
 <div id="app"></div>

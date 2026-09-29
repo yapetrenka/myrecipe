@@ -20,10 +20,6 @@ try {
 
     $pdo = new PDO($dsn, $dbUser, $dbPass, $options);
 
-    // фичи
-    $stmt1 = $pdo->query('SELECT id, name FROM mod_features ORDER BY id');
-    $features = $stmt1->fetchAll();
-
     // части
     $stmt2 = $pdo->query('SELECT id, name FROM mod_parts ORDER BY id');
     $parts = $stmt2->fetchAll();
@@ -47,7 +43,6 @@ try {
 
     $response = array(
         'pages' => $pages,
-        'features' => $features,
         'parts'    => $parts,
         'recipe_category'    => $recipe_category,
         'recipe_gallery'    => $recipe_gallery,

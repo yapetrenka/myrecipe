@@ -38,6 +38,7 @@
 import RecipeItem from '@/components/RecipeItem.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import CategoryFilter from '@/components/CategoryFilter.vue';
+import { getRecipes, getCategories } from '@/services/api.js';
 
 export default {
   name: 'RecipeList',
@@ -144,39 +145,33 @@ export default {
       this.resetDisplayed();
     }
   },
-  mounted() {
+  async mounted() {
     window.addEventListener('scroll', this.onScroll);
+    this.loading = true;
+    this.error = null;
 
-    const isLocalHostNames = ['localhost', '127.0.0.1', '::1'];
-    const isLocal = isLocalHostNames.includes(window.location.hostname) || process.env.NODE_ENV === 'development';
-    const url = isLocal ? '/api/local.json' : '/api.php';
+    try {
+      const [cats, recs] = await Promise.all([getCategories(), getRecipes()]);
 
-    fetch(url)
-        .then(async res => {
-          const text = await res.text();
-          const ct = (res.headers.get('Content-Type') || '').toLowerCase();
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          if (!ct.includes('application/json')) throw new Error('Unexpected response (not JSON): ' + text.slice(0, 200));
-          try { return JSON.parse(text); } catch (e) { throw new Error('Invalid JSON: ' + e.message); }
-        })
-        .then(data => {
-          this.categories = Array.isArray(data.recipe_category) ? data.recipe_category : [];
-          const arr = (data && data.recipe) ? data.recipe : [];
-          this.recipes = arr.map(r => ('show' in r ? r : Object.assign({}, r, { show: false })));
+      this.categories = Array.isArray(cats) ? cats : [];
+      const arr = Array.isArray(recs) ? recs : [];
+      this.recipes = arr.map(r => ('show' in r ? r : Object.assign({}, r, { show: false })));
 
-          // Сортировка по полю orders (числовая, по возрастанию)
-          this.recipes.sort((a, b) => {
-            const ao = Number(a && a.orders != null ? a.orders : 0);
-            const bo = Number(b && b.orders != null ? b.orders : 0);
-            return ao - bo;
-          });
+      // Сортировка по полю orders (числовая, по возрастанию)
+      this.recipes.sort((a, b) => {
+        const ao = Number(a && a.orders != null ? a.orders : 0);
+        const bo = Number(b && b.orders != null ? b.orders : 0);
+        return ao - bo;
+      });
 
-          if (this.initialCategory) {
-            this.selectedCategory = String(this.initialCategory);
-          }
-        })
-        .catch(err => { this.error = err.message; })
-        .finally(() => { this.loading = false; });
+      if (this.initialCategory) {
+        this.selectedCategory = String(this.initialCategory);
+      }
+    } catch (err) {
+      this.error = err && err.message ? err.message : String(err);
+    } finally {
+      this.loading = false;
+    }
   },
   beforeDestroy() {
     window.removeEventListener('scroll', this.onScroll);
