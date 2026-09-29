@@ -68,14 +68,11 @@ export default {
       top: 50%;
     }
     &-link {
-      background-color: #fff;
+      background-color: $bg-color;
       display: block;
       padding: 0 25px;
       position: relative;
       z-index: 1;
-      img {
-        width: 100px;
-      }
     }
   }
   &__nav {

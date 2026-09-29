@@ -36,7 +36,7 @@ export default {
 <style lang="scss" scoped>
 @use '@styles/variables' as *;
 .recipe-item {
-  background: $bg-color;
+  background: $light-color;
   padding: 20px;
   border-radius: $border-radius-base;
   transition: transform 0.2s;

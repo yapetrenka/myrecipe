@@ -3,6 +3,7 @@
 
 body {
   @extend %scroll-base;
+  background: $bg-color;
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
   color: $base-color;
