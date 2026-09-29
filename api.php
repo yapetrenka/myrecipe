@@ -40,7 +40,13 @@ try {
     $stmt5 = $pdo->query('SELECT id, title, category, description, url, image, ingredients, content, is_active, is_show_home, orders FROM mod_recipe ORDER BY id');
     $recipe = $stmt5->fetchAll();
 
+    // страницы
+    $stmt6 = $pdo->query('SELECT id, name, content FROM mod_pages ORDER BY id');
+    $pages = $stmt6->fetchAll();
+
+
     $response = array(
+        'pages' => $pages,
         'features' => $features,
         'parts'    => $parts,
         'recipe_category'    => $recipe_category,
